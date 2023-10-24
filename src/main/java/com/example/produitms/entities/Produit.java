@@ -27,5 +27,7 @@ public class Produit implements Serializable {
     Date publication_date;
     Boolean availability;
     String produitPicture;
+
     Integer stock;
+
 }
