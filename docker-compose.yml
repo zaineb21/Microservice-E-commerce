@@ -1,0 +1,138 @@
+version: "3.9"
+services:
+  Gateway:
+    container_name: gateway
+    image: "gateway-ms"
+    build: .\GatewayMs
+    ports:
+      - "9091:9091"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - Eureka
+
+  Commande:
+    container_name: commande
+    image: "commande-s"
+    build: .\CommandeMs
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - Eureka
+
+  Produit:
+    container_name: product
+    image: "produit-ms"
+    build: .\ProduitMs
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - Eureka
+
+  Reclamation:
+    container_name: reclamation
+    image: "reclamation-s"
+    build: .\ReclamationMS
+    ports:
+      - "8089:8089"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql-1:3306/ReclamationMS
+    depends_on:
+      - Eureka
+      - docker-mysql-1
+
+  Livraison:
+    container_name: livraison
+    image: "livraison-s"
+    build: .\LivraisonMS
+    ports:
+      - "9090:9090"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql-1:3306/MService
+    depends_on:
+      - Eureka
+      - docker-mysql-2
+
+  auth:
+    container_name: authentificationContainer12
+    image: "authentificationimg12"
+    build: .\MS-auth
+    ports:
+      - "5000:5000"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+    depends_on:
+      - Mongo
+  
+  Mongo:
+    container_name: Mongo
+    image: "mongo:5-focal"
+    ports:
+      - "27017:27017"
+    hostname: Mongo
+    depends_on:
+      - "Eureka"
+
+  Eureka:
+    container_name: eureka
+    build: .\eureka
+    hostname: serviceregistry
+    ports:
+      - "8761:8761"
+    image: "eureka"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://serviceregistry:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+
+  
+  docker-mysql-1:
+    image: mysql:8.0
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_DATABASE: "ReclamationMS"
+      MYSQL_ROOT_HOST: "%"
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      timeout: 20s
+      retries: 10
+    restart: always
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    
+  docker-mysql-2:
+    image: mysql:8.0
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_DATABASE: "MService"
+      MYSQL_ROOT_HOST: "%"
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      timeout: 20s
+      retries: 10
+    restart: always
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
