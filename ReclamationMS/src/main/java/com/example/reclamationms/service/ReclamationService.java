@@ -1,9 +1,12 @@
 package com.example.reclamationms.service;
 
+import com.example.reclamationms.Openfeign.ProduitOpenfeign;
+import com.example.reclamationms.entities.Openfeign.Produit;
 import com.example.reclamationms.entities.Reclamation;
 import com.example.reclamationms.entities.ReclamationType;
 import com.example.reclamationms.repository.ReclamationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,7 +16,13 @@ import java.util.List;
 public class ReclamationService {
     @Autowired
     ReclamationRepository rr;
-
+    private final ProduitOpenfeign produitof;
+     public ReclamationService(ProduitOpenfeign produit){
+        produitof=produit;
+     }
+    public ResponseEntity<Produit> getProduitById(Long produitId) {
+        return produitof.getproduitById(produitId);
+    }
     public Reclamation addReclamationlivreur(Reclamation reclamation) {
         reclamation.setId_produit(null);
         reclamation.setType(ReclamationType.Livreur);

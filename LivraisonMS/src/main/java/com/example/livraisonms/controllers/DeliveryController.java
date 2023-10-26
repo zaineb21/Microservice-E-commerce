@@ -1,5 +1,6 @@
 package com.example.livraisonms.controllers;
 import com.example.livraisonms.entities.Delivery;
+import com.example.livraisonms.entities.Openfeign.Commande;
 import com.example.livraisonms.services.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,10 @@ public class DeliveryController {
     }
 
 
+    @GetMapping(path = "/commandes")
+    public List<Commande> getCommandes() {
+        return ds.getcommandeAll();
+    }
 
     @DeleteMapping("/deleteDelivery/{id}")
     @ResponseBody
@@ -52,6 +57,7 @@ public class DeliveryController {
     @PutMapping("/doneDelivery/{id}")
     @ResponseBody
     public void doneDelivery(@PathVariable("id") Long idDelivery) {
+        ds.sendEmail();
         ds.marquerDone(idDelivery);
     }
 

@@ -18,17 +18,17 @@ public class Reclamation  implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
     @Column(nullable = true)
     private Long id_produit ;
+    @Column(nullable = false)
+    private String email_user ;
+    @Column(nullable = true)
+    private String name_produit ;
     @Column(nullable = true)
     private Long id_livreur ;
-
     private ReclamationType type ;
-
     @Column(nullable = false)
     private String objet ;
-
     @Column(nullable = false)
     private String description ;
 }

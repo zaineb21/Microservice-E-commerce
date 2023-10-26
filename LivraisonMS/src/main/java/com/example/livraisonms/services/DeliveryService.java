@@ -1,9 +1,13 @@
 package com.example.livraisonms.services;
 
 
+import com.example.livraisonms.Openfeign.CommandeOpenfeign;
 import com.example.livraisonms.entities.Delivery;
 import com.example.livraisonms.entities.DeliveryStatus;
+import com.example.livraisonms.entities.Openfeign.Commande;
 import com.example.livraisonms.repository.DeliveryRepository;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -17,9 +21,16 @@ public class DeliveryService {
 
     @Autowired
     DeliveryRepository dr;
+    private final CommandeOpenfeign co  ;
+
+    public DeliveryService(CommandeOpenfeign co) {
+        this.co = co;
+    }
 
 
-
+    public List<Commande> getcommandeAll() {
+        return co.getAllcommande();
+    }
     public Delivery addDelivery(Delivery d) {
 
         d.setEtat(DeliveryStatus.enAttente);
@@ -42,11 +53,11 @@ public class DeliveryService {
     }
 
 
-    public void marquerEnCours(Long idDelivery) {
+   /* public void marquerEnCours(Long idDelivery) {
         Delivery d = (Delivery)dr.findById(idDelivery).orElse(null);
         d.setEtat(DeliveryStatus.enCours);
         dr.save(d);
-    }
+    }*/
 
 
 
@@ -101,6 +112,33 @@ public class DeliveryService {
 
         return moyenne;
     }
+    private EmailService ES;
+    public void sendEmail() {
+        ES.sendSimpleEmail("Admin@gmail.com", "Reclamation", "Votre commande est en cours de traitement.");
+    }
+    public void marquerEnCours(Long idDelivery) {
+        Delivery d = (Delivery) dr.findById(idDelivery).orElse(null);
+        if (d != null) {
+            d.setEtat(DeliveryStatus.enCours);
+            dr.save(d);
+
+          /*  // Send an SMS using Twilio
+            String recipientPhoneNumber = "+21623760098"; // Replace with the recipient's phone number
+            String message = "Votre livraison est en cours de traitement"; // Replace with your desired message
+
+            // Initialize Twilio
+            Twilio.init("AC257c7b13f2c3fa5ff63dc9f4484d9184", "dd823cb4e56a88f6d88ae905d68387aa");
+
+            // Send the SMS
+            Message twilioMessage = Message.creator(
+                            new com.twilio.type.PhoneNumber(recipientPhoneNumber),
+                            new com.twilio.type.PhoneNumber("+21650403261"), // Replace with your Twilio phone number
+                            message)
+                    .create();
+
+            System.out.println("Twilio Message SID: " + twilioMessage.getSid());*/
+
+        }
 /*
 
     public List<Object> getTempsAttenteMoyenParLivreur()
@@ -110,5 +148,5 @@ public class DeliveryService {
 */
 
 
-
+    }
 }

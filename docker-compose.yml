@@ -2,10 +2,10 @@ version: "3.9"
 services:
   Gateway:
     container_name: gateway
-    image: "gateway-ms"
+    image: "gateway-s"
     build: .\GatewayMs
     ports:
-      - "9091:9091"
+      - "7070:7070"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
       - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
@@ -59,12 +59,12 @@ services:
     image: "livraison-s"
     build: .\LivraisonMS
     ports:
-      - "9090:9090"
+      - "8888:8888"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
       - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql-1:3306/MService
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql-2:3306/MService
     depends_on:
       - Eureka
       - docker-mysql-2
@@ -136,3 +136,4 @@ services:
       nofile:
         soft: 65536
         hard: 65536
+  

@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+#        - id: produit-ms
+#          uri: http://localhost:8082/
+#          predicates:
+#            - Path=/produits/**
+#          filters:
+#            - RewritePath=/produits/(?<segment>.*), /$\{segment}
+#          metadata:
+#            scope: admin
+#        - id: commande-s
+#          uri: http://localhost:8081/
+#          predicates:
+#            - Path=/commande/**
+        - id: api-gateway
+          uri: http://localhost:7070/api-gateway
+          predicates:
+            - Path=/api-gateway/**

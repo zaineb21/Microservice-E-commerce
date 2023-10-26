@@ -1,5 +1,7 @@
 package com.example.commandems.Services;
 import com.example.commandems.Entities.Commande;
+import com.example.commandems.Entities.Openfeign.Produit;
+import com.example.commandems.Openfeign.ProduitOpenfeign;
 import com.example.commandems.Repository.CommandeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,17 @@ import java.util.List;
 public class CommandeService {
     @Autowired
     private CommandeRepository commandeRepository;
+    private final ProduitOpenfeign produitOpenfeign;
+    public CommandeService(ProduitOpenfeign produitopenfeign){
+        produitOpenfeign=produitopenfeign;
+    }
 
     public List<Commande> getAllCommande() {
         return commandeRepository.findAll();
     }
-
+    public List<Produit> getAllProduitbyId(List<Long> listproduits) {
+        return produitOpenfeign.getproduitAllById(listproduits);
+    }
     public Commande addCommande(Commande commande) {
         return commandeRepository.save(commande);
     }
